@@ -25,6 +25,13 @@ export default function Results() {
   const [shortlistLimit, setShortlistLimit] = useState(50);
   const [sortBy, setSortBy] = useState('score');
 
+  const brief = data?.campaign?.brief ? {
+    ...data.campaign.brief,
+    target_pages: typeof data.campaign.brief.target_pages === 'string'
+      ? JSON.parse(data.campaign.brief.target_pages)
+      : (data.campaign.brief.target_pages || [])
+  } : null;
+
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_URL}/api/campaigns/${id}/results`)
       .then(res => {
@@ -58,8 +65,7 @@ export default function Results() {
 
   // Derived calculations for the live dashboard
   const stats = useMemo(() => {
-    if (!data) return { spent: 0, count: 0, avgDr: 0, budget: 0 };
-    const brief = data.campaign.brief;
+    if (!data || !brief) return { spent: 0, count: 0, avgDr: 0, budget: 0 };
     const selected = data.qualified.filter(d => selectedDomains.has(d.domain));
     const budget = (parseFloat(String(brief.budget).replace(/[^0-9.]/g, '')) || 0) *
                (parseFloat(brief.link_count_goal) || 1);
@@ -79,7 +85,7 @@ export default function Results() {
       budget,
       remaining: budget - spent,
       count: selected.length,
-      goal: parseInt(data.campaign.brief.link_count_goal) || 0,
+      goal: parseInt(brief.link_count_goal) || 0,
       avgDr: selected.length > 0 ? (totalDr / selected.length).toFixed(1) : 0
     };
   }, [data, selectedDomains]);
@@ -123,7 +129,7 @@ export default function Results() {
   if (error) return <div className="p-20 text-center text-red-600 dark:text-red-400 font-medium">{error}</div>;
   if (!data) return null;
 
-  const profileMax = getProfileMax(data.campaign.brief.profile);
+  const profileMax = getProfileMax(brief.profile);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-gray-900 pb-20">
@@ -156,7 +162,7 @@ export default function Results() {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">{data.campaign.client_name}</h1>
               <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-3 text-sm flex-wrap">
-                <span className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-2 py-0.5 rounded-md font-medium">{data.campaign.brief.profile} Profile</span>
+                <span className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-2 py-0.5 rounded-md font-medium">{brief.profile} Profile</span>
                 <span>Analyzed {data.qualified.length + data.excluded.length} domains</span>
               </p>
             </div>

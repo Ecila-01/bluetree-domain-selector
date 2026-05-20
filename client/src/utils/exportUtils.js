@@ -3,7 +3,10 @@ import * as XLSX from 'xlsx';
 export const exportCampaignToExcel = (campaignData, selectedDomainsSet) => {
   const { campaign, qualified } = campaignData;
   const brief = campaign.brief;
-  
+  const targetPages = typeof brief.target_pages === 'string'
+    ? JSON.parse(brief.target_pages)
+    : (brief.target_pages || []);
+
   // Filter only the domains the user actually selected
   const selectedDomains = qualified.filter(d => selectedDomainsSet.has(d.domain));
 
@@ -23,7 +26,7 @@ export const exportCampaignToExcel = (campaignData, selectedDomainsSet) => {
       'Order Payment Date': '',
       'Order Type': 'Monthly',
       'Domains': campaign.client_name,
-      'Target Pages': brief.target_pages.map(p => p.url).join(' '),
+      'Target Pages': targetPages.map(p => p.url).join(' '),
       'Domain Approval': 'No',
       'Domain Approval Tracker': '',
       'Order / Period Notes': '',
@@ -38,7 +41,7 @@ export const exportCampaignToExcel = (campaignData, selectedDomainsSet) => {
   // ==========================================
   // TAB 2: Client Target Pages (3 Columns)
   // ==========================================
-  const targetPagesData = brief.target_pages.map(page => ({
+  const targetPagesData = targetPages.map(page => ({
     'Target URL': page.url,
     'Primary Keyword': page.keyword,
     'Notes': ''
@@ -52,7 +55,7 @@ export const exportCampaignToExcel = (campaignData, selectedDomainsSet) => {
   
   const campaignManagementData = selectedDomains.map((item, index) => {
       const raw = item.raw_data;
-      const assignedPage = brief.target_pages[index % brief.target_pages.length] || { url: '', keyword: '' };
+      const assignedPage = targetPages[index % targetPages.length] || { url: '', keyword: '' };
       const rawPriceStr = String(raw.gp_price || raw.li_price || '').replace(/[^0-9.]/g, '');
       const orderPrice = parseFloat(rawPriceStr) || 0;
       const clientBudget = parseFloat(brief.budget);
