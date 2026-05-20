@@ -186,6 +186,21 @@ export default function Results() {
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                 {stats.count} <span className="text-lg text-gray-400 dark:text-gray-500 font-normal">/ {stats.goal}</span>
               </p>
+              {stats.goal > 0 && stats.count < stats.goal && (
+                <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-full">
+                  <AlertTriangle className="w-3 h-3" /> {stats.goal - stats.count} more needed
+                </span>
+              )}
+              {stats.goal > 0 && stats.count === stats.goal && (
+                <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded-full">
+                  <CheckCircle2 className="w-3 h-3" /> Goal met
+                </span>
+              )}
+              {stats.goal > 0 && stats.count > stats.goal && (
+                <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
+                  <CheckCircle2 className="w-3 h-3" /> +{stats.count - stats.goal} extra
+                </span>
+              )}
             </div>
           </div>
 
