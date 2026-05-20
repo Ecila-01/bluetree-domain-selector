@@ -19,8 +19,8 @@ export default function NewCampaign() {
     link_count_goal: '',
     geo: '',
     follow_preference: 'dofollow',
-    min_dr: 45,
-    min_traffic: 2000,
+    min_dr: '',
+    min_traffic: '',
     profile: 'Standard'
 });
 
