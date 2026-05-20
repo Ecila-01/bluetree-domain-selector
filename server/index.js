@@ -328,6 +328,22 @@ app.get('/api/campaigns/:id/results', (req, res) => {
     }
 });
 
+// Keep-alive: ping self every 10 minutes to prevent Railway from sleeping
+const BACKEND_URL = process.env.RAILWAY_PUBLIC_DOMAIN
+    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+    : null;
+
+if (BACKEND_URL) {
+    setInterval(() => {
+        const http = require('https');
+        http.get(`${BACKEND_URL}/api/health`, (res) => {
+            console.log(`Keep-alive ping: ${res.statusCode}`);
+        }).on('error', (err) => {
+            console.error('Keep-alive ping failed:', err.message);
+        });
+    }, 10 * 60 * 1000);
+}
+
 app.listen(PORT, () => {
     logInfo(`Server listening on port ${PORT}`);
 });

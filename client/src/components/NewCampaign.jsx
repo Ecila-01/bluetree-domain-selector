@@ -25,11 +25,23 @@ export default function NewCampaign() {
 });
 
   const [file, setFile] = useState(null);
+  const [backendReady, setBackendReady] = useState(false);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/config/profiles`)
-      .then(res => setProfiles(res.data))
-      .catch(err => console.error("Failed to load profiles:", err));
+    const checkBackend = () => {
+      axios.get(`${import.meta.env.VITE_API_URL}/api/health`)
+        .then(() => {
+          setBackendReady(true);
+          return axios.get(`${import.meta.env.VITE_API_URL}/api/config/profiles`);
+        })
+        .then(res => setProfiles(res.data))
+        .catch(err => {
+          console.error("Backend unavailable:", err);
+          setBackendReady(false);
+          setTimeout(checkBackend, 5000);
+        });
+    };
+    checkBackend();
   }, []);
 
   const toggleTheme = () => {
@@ -119,6 +131,13 @@ export default function NewCampaign() {
           </div>
           <p className="text-gray-500 dark:text-gray-400 text-lg">Define your brief and AI will score the perfect publisher domains.</p>
         </div>
+
+        {!backendReady && (
+          <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-center gap-2 text-amber-700 dark:text-amber-400 text-sm">
+            <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+            Scoring engine is waking up... This takes up to 30 seconds on first load.
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
 
@@ -299,7 +318,7 @@ export default function NewCampaign() {
             <p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
               Processing 1,000+ domains takes ~3 seconds.
             </p>
-            <button type="submit" disabled={isLoading || !file}
+            <button type="submit" disabled={isLoading || !file || !backendReady}
               className="w-full sm:w-auto bg-gray-900 dark:bg-blue-600 text-white font-medium py-3 px-8 rounded-lg hover:bg-black dark:hover:bg-blue-700 focus:ring-4 focus:ring-gray-200 dark:focus:ring-blue-900/40 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed flex justify-center items-center transition-all shadow-sm">
               {isLoading ? (
                 <><Loader2 className="w-5 h-5 mr-3 animate-spin text-gray-400 dark:text-blue-300" /> Scoring Engine Running...</>
