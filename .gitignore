@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables - NEVER commit these
+.env
+client/.env
+server/.env
+
+# SQLite database files
+server/bluetree.db
+server/bluetree.db-shm
+server/bluetree.db-wal
+
+# Build output
+client/dist/
+client/dist-ssr/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+server/logs/
+
+# OS files
+.DS_Store
+*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
