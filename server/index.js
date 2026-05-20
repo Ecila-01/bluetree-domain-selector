@@ -11,7 +11,7 @@ const { scoreDomain } = require('./scoring');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// --- Logging Setup ---
+// --- Logging Setup ---.
 const logsDir = path.join(__dirname, 'logs');
 if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
 const logFile = path.join(logsDir, 'app.log');
