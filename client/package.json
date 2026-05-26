@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",
+    "@vercel/analytics": "^2.0.1",
     "axios": "^1.16.1",
     "lucide-react": "^1.16.0",
     "papaparse": "^5.5.3",

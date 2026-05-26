@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import NewCampaign from './components/NewCampaign';
 import Results from './components/Results';
 import Campaigns from './components/Campaigns';
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/campaign/:id" element={<Results />} />
         <Route path="/campaigns" element={<Campaigns />} />
       </Routes>
+      <Analytics />
     </div>
   );
 }
